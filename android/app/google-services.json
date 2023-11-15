@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "430248180322",
+    "project_id": "tap2x-f7ab7",
+    "storage_bucket": "tap2x-f7ab7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:430248180322:android:fd17166dda57359bc56f3b",
+        "android_client_info": {
+          "package_name": "com.brainstormlimitless.portfolio_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf3XGKIrRf75RX24m0O2erw-x01I0SduU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

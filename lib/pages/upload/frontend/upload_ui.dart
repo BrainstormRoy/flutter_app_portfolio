@@ -201,7 +201,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
                         CustomTextField02(
                           controller: _phone,
                           labelText: '+xxxxxxxxxxxx',
-                          textInputType: TextInputType.number,
+                          textInputType: TextInputType.phone,
                         ),
                         // ^ ================= Phone =================
 
@@ -216,7 +216,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
                         CustomTextField02(
                           controller: _whatsapp,
                           labelText: 'xxxxxxxxxxxx',
-                          textInputType: TextInputType.number,
+                          textInputType: TextInputType.phone,
                         ),
                         // ^ ================= Whatsapp =================
 
@@ -231,7 +231,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
                         CustomTextField02(
                           controller: _twitter,
                           labelText: '@johndoe',
-                          textInputType: TextInputType.url,
+                          textInputType: TextInputType.name,
                         ),
                         // ^ ================= Twitter =================
 
@@ -263,7 +263,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
                               ),
                               backgroundColor: const Color(0xffEE3A57),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               if (_firstName.text.trim().isNotEmpty &&
                                   _lastName.text.trim().isNotEmpty &&
                                   _username.text.trim().isNotEmpty &&
@@ -286,7 +286,19 @@ class _UserUploadUiState extends State<UserUploadUi> {
                                   twitter: _twitter.text.trim(),
                                   bio: _bio.text.trim(),
                                 );
-                                createUser(user);
+
+                                //  createUser(user);
+
+                                await createUser(user);
+                                // Clear the text field controllers
+                                _firstName.clear();
+                                _lastName.clear();
+                                _username.clear();
+                                _email.clear();
+                                _phone.clear();
+                                _whatsapp.clear();
+                                _twitter.clear();
+                                _bio.clear();
                               } else {
                                 customSnackBar(
                                     context,

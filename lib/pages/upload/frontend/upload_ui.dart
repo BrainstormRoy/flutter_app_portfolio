@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:portfolio_app/pages/upload/frontend/retrieve_data.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 
 import '../../../global/widgets/custom_textfield.dart';
 import '../backend/function/create_user.dart';
@@ -27,16 +28,18 @@ class _UserUploadUiState extends State<UserUploadUi> {
   final TextEditingController _twitter = TextEditingController();
   final TextEditingController _bio = TextEditingController();
 
+  bool showUsernameAvailability = false;
   bool usernameAvailable = true;
-  // TODO:final Debouncer _debouncer = Debouncer(milliseconds: 500);
 
-  Stream<List<User>> checkUsername(String username) =>
-      FirebaseFirestore.instance
-          .collection('users')
-          .where('userName', isEqualTo: username)
-          .snapshots()
-          .map((snapshot) =>
-              snapshot.docs.map((doc) => User.fromJson(doc.data())).toList());
+  Stream<List<User>> checkUsername(String username) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .where('userName', isEqualTo: username)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      return snapshot.docs.map((doc) => User.fromJson(doc.data())).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,34 +130,42 @@ class _UserUploadUiState extends State<UserUploadUi> {
                       labelText: 'johndoe',
                       textInputType: TextInputType.name,
                       onChanged: (value) {
-                        checkUsername(_username.text.trim()).listen((userList) {
-                          // Check if the user exists in the userList
-
-                          if (userList.isNotEmpty) {
-                            setState(() {
-                              usernameAvailable = false;
-                            });
-                          } else {
-                            setState(() {
-                              usernameAvailable = true;
-                            });
-                          }
+                        setState(() {
+                          showUsernameAvailability = true;
                         });
+
+                        // adding delay while calling the function
+                        EasyDebounce.debounce(
+                          'my-debouncer',
+                          const Duration(milliseconds: 1000),
+                          () async {
+                            final userList =
+                                await checkUsername(_username.text.trim())
+                                    .first;
+
+                            setState(() {
+                              usernameAvailable = userList.isEmpty;
+                            });
+                          },
+                        );
                       },
                     ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: CustomText01(
-                        text: usernameAvailable
-                            ? 'username available ✓'
-                            : 'username not available ✗',
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w800,
-                        color: usernameAvailable
-                            ? const Color(0xff28A745)
-                            : const Color(0xffEE3A57),
-                      ),
-                    ),
+                    const Gap(5.0),
+                    showUsernameAvailability
+                        ? Align(
+                            alignment: Alignment.bottomRight,
+                            child: CustomText01(
+                              text: usernameAvailable
+                                  ? 'username available ✓'
+                                  : 'username not available ✗',
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w800,
+                              color: usernameAvailable
+                                  ? const Color(0xff28A745)
+                                  : const Color(0xffEE3A57),
+                            ),
+                          )
+                        : const SizedBox(),
 
                     // ^ ================= Username =================
 

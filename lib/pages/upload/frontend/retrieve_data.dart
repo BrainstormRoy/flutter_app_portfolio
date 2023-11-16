@@ -17,12 +17,12 @@ class _ShowUserDataState extends State<ShowUserData> {
       .map((snapshot) =>
           snapshot.docs.map((doc) => User.fromJson(doc.data())).toList());
 
-  Stream<List<User>> readUserss(String username) => FirebaseFirestore.instance
-      .collection('users')
-      .where('firstName', isEqualTo: username)
-      .snapshots()
-      .map((snapshot) =>
-          snapshot.docs.map((doc) => User.fromJson(doc.data())).toList());
+  // Stream<List<User>> readUserss(String username) => FirebaseFirestore.instance
+  //     .collection('users')
+  //     .where('firstName', isEqualTo: username)
+  //     .snapshots()
+  //     .map((snapshot) =>
+  //         snapshot.docs.map((doc) => User.fromJson(doc.data())).toList());
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +37,11 @@ class _ShowUserDataState extends State<ShowUserData> {
                 itemCount: users.length,
                 itemBuilder: (context, index) {
                   final user = users[index];
-                  return ListTile(
-                    title: Text('${user.firstName} ${user.lastName}'),
-                    subtitle: Text(user.email),
-                    // Customize the ListTile as needed
-                  );
+                  // return ListTile(
+                  //   title: Text('${user.firstName} ${user.lastName}'),
+                  //   subtitle: Text(user.email),
+                  // );
+                  return Text(user.email);
                 },
               );
             } else if (snapshot.hasError) {

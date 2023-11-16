@@ -2,7 +2,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_app/global/theme/theme.dart';
-import 'pages/auth/frontend/login.dart';
+import 'pages/auth/frontend/login_1.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       // ),
       theme: lightMode,
       // darkTheme: darkMode,
-      home: const AppLoginUi(),
+      home: const SocialLoginUi(),
     );
   }
 }

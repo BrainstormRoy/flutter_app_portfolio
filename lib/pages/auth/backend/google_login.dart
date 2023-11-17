@@ -20,6 +20,17 @@ Future<void> saveUserDetails({
   await prefs.setString('photoUrl', photoUrl ?? '');
 }
 
+// Function to remove all user details from SharedPreferences
+Future<void> removeUserDetails() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('firstName');
+  await prefs.remove('lastName');
+  await prefs.remove('email');
+  await prefs.remove('phone');
+  await prefs.remove('photoUrl');
+  // print('User details removed successfully!');
+}
+
 // Google Sign-In function
 Future<Map<String, dynamic>> googleSignIn() async {
   try {
@@ -93,6 +104,8 @@ Future<void> signOut(context) async {
   try {
     await auth.signOut();
     await googleSignIn.signOut();
+    await removeUserDetails();
+
     customSnackBar(context, 'You have been logged out successfully!',
         Colors.grey.shade400, Colors.white);
   } catch (e) {

@@ -1,11 +1,14 @@
 // color: Color(0xffFBFBFD),
 // Color(0xffEE3A57),
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:portfolio_app/global/widgets/custom_snackbar.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:easy_debounce/easy_debounce.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../global/widgets/custom_textfield.dart';
 import '../../../global/widgets/loading_indicator.dart';
@@ -29,6 +32,21 @@ class _UserUploadUiState extends State<UserUploadUi> {
   final TextEditingController _twitter = TextEditingController();
   final TextEditingController _bio = TextEditingController();
 
+  setDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _firstName.text = prefs.getString('firstName')!;
+      _lastName.text = prefs.getString('lastName')!;
+
+      // Generate a random 6-digit number
+      int randomNumber = Random().nextInt(900000) + 100000;
+      final number = randomNumber.toString();
+      _username.text = _lastName.text + _firstName.text + number;
+      _email.text = prefs.getString('email')!;
+      _phone.text = prefs.getString('phone')!;
+    });
+  }
+
   bool showUsernameAvailability = false;
   bool usernameAvailable = true;
   bool isLoading = false;
@@ -41,6 +59,12 @@ class _UserUploadUiState extends State<UserUploadUi> {
         .asyncMap((snapshot) async {
       return snapshot.docs.map((doc) => User.fromJson(doc.data())).toList();
     });
+  }
+
+  @override
+  void initState() {
+    setDetails();
+    super.initState();
   }
 
   @override

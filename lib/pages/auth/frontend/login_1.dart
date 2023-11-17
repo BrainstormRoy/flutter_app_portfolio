@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:portfolio_app/pages/upload/frontend/upload_ui.dart';
+
+import '../../upload/frontend/upload_ui.dart';
+import '../backend/google_login.dart';
 
 class SocialLoginUi extends StatefulWidget {
   const SocialLoginUi({super.key});
@@ -67,23 +70,27 @@ class _SocialLoginUiState extends State<SocialLoginUi> {
                           ),
                           backgroundColor: const Color(0xffEE3A57),
                         ),
-                        onPressed: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => const UserUploadUi(),
-                          //   ),
-                          // );
+                        onPressed: () async {
+                          // function to avoid build context error
+                          navigateFunc() {
+                            navigateToPage(context, const UserUploadUi());
+                          }
+
+                          final x = await googleSignIn();
+                          if (x['message'] == 'Sign-in successful') {
+                            navigateFunc();
+                          }
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            //Image.asset('assets/icons/google_logo.png',),
                             SvgPicture.asset(
                               'assets/icons/google_logo.svg',
                               height: 30.0,
                               colorFilter: const ColorFilter.mode(
-                                  Color(0xffFBFBFD), BlendMode.srcIn),
+                                Color(0xffFBFBFD),
+                                BlendMode.srcIn,
+                              ),
                             ),
                             const Gap(20.0),
                             const CustomText01(
@@ -110,6 +117,7 @@ class _SocialLoginUiState extends State<SocialLoginUi> {
                           backgroundColor: const Color(0xffEE3A57),
                         ),
                         onPressed: () {
+                          signOut(context);
                           // Navigator.push(
                           //   context,
                           //   MaterialPageRoute(

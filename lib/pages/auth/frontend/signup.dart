@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:portfolio_app/pages/auth/frontend/login.dart';
+import 'package:portfolio_app/pages/auth/frontend/login_2.dart';
 
 import '../../../global/widgets/custom_text.dart';
 import '../../../global/widgets/custom_textfield.dart';

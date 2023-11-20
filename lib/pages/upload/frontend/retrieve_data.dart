@@ -11,11 +11,11 @@ class ShowUserData extends StatefulWidget {
 }
 
 class _ShowUserDataState extends State<ShowUserData> {
-  Stream<List<User>> readUsers() => FirebaseFirestore.instance
+  Stream<List<Users>> readUsers() => FirebaseFirestore.instance
       .collection('users')
       .snapshots()
       .map((snapshot) =>
-          snapshot.docs.map((doc) => User.fromJson(doc.data())).toList());
+          snapshot.docs.map((doc) => Users.fromJson(doc.data())).toList());
 
   // Stream<List<User>> readUserss(String username) => FirebaseFirestore.instance
   //     .collection('users')
@@ -28,7 +28,7 @@ class _ShowUserDataState extends State<ShowUserData> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: StreamBuilder<List<User>>(
+        body: StreamBuilder<List<Users>>(
           stream: readUsers(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {

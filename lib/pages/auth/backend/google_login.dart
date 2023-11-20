@@ -81,7 +81,7 @@ Future<Map<String, dynamic>> googleSignIn() async {
 
       return {
         'message': 'Sign-in successful',
-        'user_id': user?.uid,
+        'email': user?.email,
       };
     } catch (e) {
       return {

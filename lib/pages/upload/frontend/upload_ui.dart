@@ -1,22 +1,43 @@
 // color: Color(0xffFBFBFD),
 // Color(0xffEE3A57),
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/global/widgets/custom_snackbar.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:portfolio_app/pages/auth/frontend/login.dart';
+import 'package:portfolio_app/pages/upload/frontend/home.dart';
 
+import '../model/user_model.dart';
+import '../backend/function/create_user.dart';
+import '../../auth/backend/google_login.dart';
 import '../../../global/widgets/custom_textfield.dart';
 import '../../../global/widgets/loading_indicator.dart';
-import '../backend/function/create_user.dart';
-import '../model/user_model.dart';
 
 class UserUploadUi extends StatefulWidget {
-  const UserUploadUi({super.key});
+  const UserUploadUi({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+    required this.email,
+    required this.phone,
+    required this.whatsapp,
+    required this.twitter,
+    required this.bio,
+  });
+
+  final String? firstName,
+      lastName,
+      username,
+      email,
+      phone,
+      whatsapp,
+      twitter,
+      bio;
 
   @override
   State<UserUploadUi> createState() => _UserUploadUiState();
@@ -32,38 +53,94 @@ class _UserUploadUiState extends State<UserUploadUi> {
   final TextEditingController _twitter = TextEditingController();
   final TextEditingController _bio = TextEditingController();
 
-  setDetails() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _firstName.text = prefs.getString('firstName')!;
-      _lastName.text = prefs.getString('lastName')!;
-
-      // Generate a random 6-digit number
-      int randomNumber = Random().nextInt(900000) + 100000;
-      final number = randomNumber.toString();
-      _username.text = _lastName.text + _firstName.text + number;
-      _email.text = prefs.getString('email')!;
-      _phone.text = prefs.getString('phone')!;
-    });
-  }
-
   bool showUsernameAvailability = false;
   bool usernameAvailable = true;
   bool isLoading = false;
 
-  Stream<List<User>> checkUsername(String username) {
+  // setDetails() async {
+  //   SharedPreferences prefs =
+  //       await SharedPreferences.getInstance(); // ! .................
+  //   setState(() {
+  //     _firstName.text = prefs.getString('firstName')!;
+  //     _lastName.text = prefs.getString('lastName')!;
+
+  //     // Generate a random 6-digit number
+  //     int randomNumber = Random().nextInt(900000) + 100000;
+  //     final number = randomNumber.toString();
+  //     _username.text = _lastName.text + _firstName.text + number;
+  //     _email.text = prefs.getString('email')!; // !................
+  //     _phone.text = prefs.getString('phone')!;
+  //   });
+  // }
+
+  // Stream<List<Users>> retrieveUserFromFirebase(String? email) {
+  //   return FirebaseFirestore.instance
+  //       .collection('users')
+  //       .where('email', isEqualTo: email)
+  //       .snapshots()
+  //       .asyncMap(
+  //     (snapshot) async {
+  //       // return snapshot.docs.map((doc) => User.fromJson(doc.data())).toList();
+  //       if (snapshot.docs.isNotEmpty) {
+  //         final userData = snapshot.docs.first.data();
+
+  //         // Extract data from the document and update the state
+  //         _updateStateFromFirebase(userData);
+  //         return snapshot.docs
+  //             .map((doc) => Users.fromJson(doc.data()))
+  //             .toList();
+  //       } else {
+  //         return setDetails();
+  //       }
+  //     },
+  //   );
+  // }
+
+  // void _updateStateFromFirebase(Map<String, dynamic> userData) {
+  //   setState(() {
+  //     _firstName.text = userData['firstName'];
+  //     _lastName.text = userData['lastName'];
+  //     _username.text = userData['username'];
+  //   });
+  // }
+
+  Stream<List<Users>> checkUsername(String username) {
     return FirebaseFirestore.instance
         .collection('users')
         .where('userName', isEqualTo: username)
         .snapshots()
         .asyncMap((snapshot) async {
-      return snapshot.docs.map((doc) => User.fromJson(doc.data())).toList();
+      return snapshot.docs.map((doc) => Users.fromJson(doc.data())).toList();
     });
   }
 
+  // setData() {
+  //   setState(() {
+  //     _firstName.text = widget.firstName!;
+  //     _lastName.text = widget.lastName!;
+  //     _username.text = widget.username!;
+  //     _email.text = widget.email!;
+  //     _phone.text = widget.phone!;
+  //     _whatsapp.text = widget.whatsapp!;
+  //     _twitter.text = widget.twitter!;
+  //     _bio.text = widget.bio!;
+  //   });
+  // }
+
   @override
   void initState() {
-    setDetails();
+    //  setData();
+    // print(widget.firstName);
+    setState(() {
+      _firstName.text = widget.firstName!;
+      _lastName.text = widget.lastName!;
+      _username.text = widget.username!;
+      _email.text = widget.email!;
+      _phone.text = widget.phone!;
+      _whatsapp.text = widget.whatsapp!;
+      _twitter.text = widget.twitter!;
+      _bio.text = widget.bio!;
+    });
     super.initState();
   }
 
@@ -88,15 +165,35 @@ class _UserUploadUiState extends State<UserUploadUi> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Gap(24.0),
-                        const Align(
-                          alignment: Alignment.topLeft,
-                          child: CustomText01(
-                            text: 'Upload Data',
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
-                            color: Color(0xffFBFBFD),
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Align(
+                              alignment: Alignment.topLeft,
+                              child: CustomText01(
+                                text: 'Upload Data',
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2,
+                                color: Color(0xffFBFBFD),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                navigateFunc() {
+                                  navigateToPage(
+                                      context, const SocialLoginUi());
+                                }
+
+                                await signOut(context);
+                                navigateFunc();
+                              },
+                              icon: const Icon(
+                                Icons.logout,
+                                color: Color(0xffFBFBFD),
+                              ),
+                            )
+                          ],
                         ),
                         const Gap(28.0),
 
@@ -159,8 +256,14 @@ class _UserUploadUiState extends State<UserUploadUi> {
                           controller: _username,
                           labelText: 'johndoe',
                           textInputType: TextInputType.name,
+                          textCapitalization: TextCapitalization.sentences,
                           onChanged: (value) {
                             setState(() {
+                              _username.value = _username.value.copyWith(
+                                text: value.toLowerCase(),
+                                selection: TextSelection.collapsed(
+                                    offset: value.length),
+                              );
                               showUsernameAvailability = true;
                             });
 
@@ -288,6 +391,11 @@ class _UserUploadUiState extends State<UserUploadUi> {
                               backgroundColor: const Color(0xffEE3A57),
                             ),
                             onPressed: () async {
+                              navigateFunc() {
+                                navigateToPage(
+                                    context, HomePage(email: _email.text));
+                              }
+
                               if (_firstName.text.trim().isNotEmpty &&
                                   _lastName.text.trim().isNotEmpty &&
                                   _username.text.trim().isNotEmpty &&
@@ -299,7 +407,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                final user = User(
+                                final user = Users(
                                   firstName: _firstName.text.trim(),
                                   lastName: _lastName.text.trim(),
                                   userName: _username.text.trim(),
@@ -314,6 +422,10 @@ class _UserUploadUiState extends State<UserUploadUi> {
                                 //  createUser(user);
 
                                 await createUser(user);
+                                setState(() {
+                                  isLoading = false;
+                                });
+
                                 // Clear the text field controllers
                                 _firstName.clear();
                                 _lastName.clear();
@@ -323,6 +435,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
                                 _whatsapp.clear();
                                 _twitter.clear();
                                 _bio.clear();
+                                navigateFunc();
                               } else {
                                 customSnackBar(
                                     context,

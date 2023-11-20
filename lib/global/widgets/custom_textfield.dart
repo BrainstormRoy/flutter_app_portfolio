@@ -58,6 +58,8 @@ class _CustomTextField01State extends State<CustomTextField01> {
   }
 }
 
+// ! ------------------------------------------------
+
 class CustomTextField02 extends StatefulWidget {
   const CustomTextField02({
     super.key,
@@ -69,6 +71,7 @@ class CustomTextField02 extends StatefulWidget {
     this.widget,
     this.maxLines = 1,
     this.onChanged,
+    this.textCapitalization,
   });
   final TextEditingController controller;
   final String labelText;
@@ -78,6 +81,7 @@ class CustomTextField02 extends StatefulWidget {
   final Widget? widget;
   final int? maxLines;
   final void Function(String)? onChanged;
+  final TextCapitalization? textCapitalization;
 
   @override
   State<CustomTextField02> createState() => _CustomTextField02State();
@@ -120,7 +124,8 @@ class _CustomTextField02State extends State<CustomTextField02> {
       style: GoogleFonts.merriweather(
         color: const Color(0xffFBFBFD),
       ),
-      textCapitalization: TextCapitalization.sentences,
+      textCapitalization:
+          widget.textCapitalization ?? TextCapitalization.sentences,
     );
   }
 }

@@ -1,9 +1,9 @@
-class User {
+class Users {
   String id;
   final String firstName, lastName, userName, email, twitter, bio;
   final int phone, whatsApp;
 
-  User({
+  Users({
     this.id = '',
     required this.firstName,
     required this.lastName,
@@ -30,8 +30,8 @@ class User {
   }
 
   // Static method to create a User object from a Map
-  static User fromJson(Map<String, dynamic> json) {
-    return User(
+  static Users fromJson(Map<String, dynamic> json) {
+    return Users(
       id: json['id'] ?? '',
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',

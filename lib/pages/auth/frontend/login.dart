@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
-import 'package:portfolio_app/global/widgets/custom_textfield.dart';
-import 'package:portfolio_app/pages/auth/frontend/signup.dart';
-import 'package:portfolio_app/pages/upload/frontend/upload_ui.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:portfolio_app/pages/upload/frontend/home.dart';
 
-class AppLoginUi extends StatefulWidget {
-  const AppLoginUi({super.key});
+import '../backend/google_login.dart';
+
+class SocialLoginUi extends StatefulWidget {
+  const SocialLoginUi({super.key});
 
   @override
-  State<AppLoginUi> createState() => _AppLoginUiState();
+  State<SocialLoginUi> createState() => _SocialLoginUiState();
 }
 
-class _AppLoginUiState extends State<AppLoginUi> {
+class _SocialLoginUiState extends State<SocialLoginUi> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -45,187 +47,111 @@ class _AppLoginUiState extends State<AppLoginUi> {
                     // ! ================= container =================
                     const Gap(44.0),
                     // ! ================= login text =================
-                    const Align(
-                      alignment: Alignment.topLeft,
-                      child: CustomText01(
-                        text: 'Log-in',
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        color: Color(0xffFBFBFD),
+                    // const Align(
+                    //   alignment: Alignment.topLeft,
+                    //   child: CustomText01(
+                    //     text: 'Log-in',
+                    //     fontSize: 24.0,
+                    //     fontWeight: FontWeight.w900,
+                    //     letterSpacing: 2,
+                    //     color: Color(0xffFBFBFD),
+                    //   ),
+                    // ),
+                    // ! ================= login text =================
+
+                    // ! ================= log in with google =================
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50.0,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          backgroundColor: const Color(0xffEE3A57),
+                        ),
+                        onPressed: () async {
+                          // function to avoid build context error
+                          navigateFunc(String userEmail) {
+                            navigateToPage(context, HomePage(email: userEmail));
+                          }
+
+                          final x = await googleSignIn();
+                          if (x['message'] == 'Sign-in successful') {
+                            navigateFunc(x['email']);
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/google_logo.svg',
+                              height: 30.0,
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xffFBFBFD),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            const Gap(20.0),
+                            const CustomText01(
+                              text: 'Login with Google',
+                              color: Color(0xffFBFBFD),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    // ! ================= login text =================
 
                     const Gap(40.0),
 
-                    // ! ================= Main Body =================
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // ^ ================= email id =================
-                          const CustomText01(
-                            text: 'Email',
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xffFBFBFD),
+                    // ! ================= log in with apple =================
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50.0,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
-                          CustomTextField02(
-                            controller: _emailController,
-                            labelText: 'johndoe@gmail.com',
-                          ),
-                          // ^ ================= email id =================
+                          backgroundColor: const Color(0xffEE3A57),
+                        ),
+                        onPressed: () {
+                          // FirebaseAuth auth = FirebaseAuth.instance;
+                          // User? user = auth.currentUser;
+                          // print(user!.email);
+                          // signOut(context);
 
-                          const Gap(18.0),
-
-                          // ^ ================= password =================
-                          const CustomText01(
-                            text: 'Password',
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xffFBFBFD),
-                          ),
-                          CustomTextField02(
-                            controller: _passwordController,
-                            labelText: '**************',
-                            obscureText: isPasswordVisible,
-                            widget: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  isPasswordVisible = !isPasswordVisible;
-                                });
-                              },
-                              icon: isPasswordVisible
-                                  ? const Icon(
-                                      Icons.visibility_off,
-                                      color: Color(0xffFBFBFD),
-                                    )
-                                  : const Icon(
-                                      Icons.visibility,
-                                      color: Color(0xffFBFBFD),
-                                    ),
-                            ),
-                          ),
-
-                          const Gap(4.0),
-
-                          InkWell(
-                            onTap: () {},
-                            child: const Align(
-                              alignment: Alignment.bottomRight,
-                              child: CustomText01(
-                                text: 'Forgot Password?',
-                                color: Color(0xffEE3A57),
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => const UserUploadUi(),
+                          //   ),
+                          // );
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/apple_logo.svg',
+                              height: 30.0,
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xffFBFBFD),
+                                BlendMode.srcIn,
                               ),
                             ),
-                          ),
-                          // ^ ================= password =================
-
-                          const Gap(24.0),
-
-                          // ^ ================= login button =================
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50.0,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                backgroundColor: const Color(0xffEE3A57),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const UserUploadUi(),
-                                  ),
-                                );
-                              },
-                              child: const CustomText01(
-                                text: 'Login',
-                                color: Color(0xffFBFBFD),
-                                fontWeight: FontWeight.bold,
-                              ),
+                            const Gap(20),
+                            const CustomText01(
+                              text: 'Login with Apple',
+                              color: Color(0xffFBFBFD),
+                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                          // ^ ================= login button =================
-                        ],
+                          ],
+                        ),
                       ),
                     ),
+
                     // ! ================= container =================
-                    const Spacer(),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Column(
-                        children: [
-                          const CustomText01(
-                            text: 'Or Sign in with',
-                            color: Color(0xffFBFBFD),
-                            fontSize: 14.0,
-                            letterSpacing: 2,
-                          ),
-                          const Gap(8.0),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Card(
-                                child: SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              ),
-                              Card(
-                                child: SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              ),
-                              Card(
-                                child: SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              ),
-                              Card(
-                                child: SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Gap(12.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const CustomText01(
-                                text: 'Don\'t have an account?',
-                                color: Color(0xffFBFBFD),
-                                fontSize: 14.0,
-                              ),
-                              const Gap(20.0),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const AppSignUpUi()));
-                                },
-                                child: const CustomText01(
-                                  text: 'Sign Up',
-                                  color: Color(0xffEE3A57),
-                                  fontSize: 14.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),

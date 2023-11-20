@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../model/user_model.dart';
 
-Future createUser(User user) async {
+Future createUser(Users user) async {
   try {
     // Reference to the document in the 'users' collection with a unique ID
     final docUser = FirebaseFirestore.instance.collection('users').doc();

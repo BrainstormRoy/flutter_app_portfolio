@@ -1,5 +1,5 @@
 class Users {
-  String id;
+  String id, dpUrl;
   final String firstName, lastName, userName, email, twitter, bio;
   final int phone, whatsApp;
 
@@ -13,6 +13,7 @@ class Users {
     required this.whatsApp,
     required this.twitter,
     required this.bio,
+    this.dpUrl = '',
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +27,7 @@ class Users {
       'whatsApp': whatsApp,
       'twitter': twitter,
       'bio': bio,
+      'dpUrl': dpUrl,
     };
   }
 
@@ -41,6 +43,7 @@ class Users {
       whatsApp: json['whatsApp'] ?? 0,
       twitter: json['twitter'] ?? '',
       bio: json['bio'] ?? '',
+      dpUrl: json['dpUrl'] ?? '',
     );
   }
 }

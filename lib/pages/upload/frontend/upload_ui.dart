@@ -1,9 +1,15 @@
 // color: Color(0xffFBFBFD),
 // Color(0xffEE3A57),
 
+import 'dart:io';
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:glassmorphism/glassmorphism.dart';
+
 import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/global/widgets/custom_snackbar.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
@@ -44,6 +50,13 @@ class UserUploadUi extends StatefulWidget {
 }
 
 class _UserUploadUiState extends State<UserUploadUi> {
+  bool showUsernameAvailability = false;
+  bool usernameAvailable = true;
+  bool isLoading = false;
+
+  PlatformFile? mediaFile;
+  UploadTask? uploadTask;
+
   final TextEditingController _firstName = TextEditingController();
   final TextEditingController _lastName = TextEditingController();
   final TextEditingController _username = TextEditingController();
@@ -53,56 +66,16 @@ class _UserUploadUiState extends State<UserUploadUi> {
   final TextEditingController _twitter = TextEditingController();
   final TextEditingController _bio = TextEditingController();
 
-  bool showUsernameAvailability = false;
-  bool usernameAvailable = true;
-  bool isLoading = false;
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null) {
+      return;
+    }
 
-  // setDetails() async {
-  //   SharedPreferences prefs =
-  //       await SharedPreferences.getInstance(); // ! .................
-  //   setState(() {
-  //     _firstName.text = prefs.getString('firstName')!;
-  //     _lastName.text = prefs.getString('lastName')!;
-
-  //     // Generate a random 6-digit number
-  //     int randomNumber = Random().nextInt(900000) + 100000;
-  //     final number = randomNumber.toString();
-  //     _username.text = _lastName.text + _firstName.text + number;
-  //     _email.text = prefs.getString('email')!; // !................
-  //     _phone.text = prefs.getString('phone')!;
-  //   });
-  // }
-
-  // Stream<List<Users>> retrieveUserFromFirebase(String? email) {
-  //   return FirebaseFirestore.instance
-  //       .collection('users')
-  //       .where('email', isEqualTo: email)
-  //       .snapshots()
-  //       .asyncMap(
-  //     (snapshot) async {
-  //       // return snapshot.docs.map((doc) => User.fromJson(doc.data())).toList();
-  //       if (snapshot.docs.isNotEmpty) {
-  //         final userData = snapshot.docs.first.data();
-
-  //         // Extract data from the document and update the state
-  //         _updateStateFromFirebase(userData);
-  //         return snapshot.docs
-  //             .map((doc) => Users.fromJson(doc.data()))
-  //             .toList();
-  //       } else {
-  //         return setDetails();
-  //       }
-  //     },
-  //   );
-  // }
-
-  // void _updateStateFromFirebase(Map<String, dynamic> userData) {
-  //   setState(() {
-  //     _firstName.text = userData['firstName'];
-  //     _lastName.text = userData['lastName'];
-  //     _username.text = userData['username'];
-  //   });
-  // }
+    setState(() {
+      mediaFile = result.files.first;
+    });
+  }
 
   Stream<List<Users>> checkUsername(String username) {
     return FirebaseFirestore.instance
@@ -114,23 +87,8 @@ class _UserUploadUiState extends State<UserUploadUi> {
     });
   }
 
-  // setData() {
-  //   setState(() {
-  //     _firstName.text = widget.firstName!;
-  //     _lastName.text = widget.lastName!;
-  //     _username.text = widget.username!;
-  //     _email.text = widget.email!;
-  //     _phone.text = widget.phone!;
-  //     _whatsapp.text = widget.whatsapp!;
-  //     _twitter.text = widget.twitter!;
-  //     _bio.text = widget.bio!;
-  //   });
-  // }
-
   @override
   void initState() {
-    //  setData();
-    // print(widget.firstName);
     setState(() {
       _firstName.text = widget.firstName!;
       _lastName.text = widget.lastName!;
@@ -197,7 +155,186 @@ class _UserUploadUiState extends State<UserUploadUi> {
                         ),
                         const Gap(28.0),
 
+                        // ^ ================= DP =================
+                        mediaFile != null
+                            ? Stack(
+                                children: [
+                                  Container(
+                                    height:
+                                        MediaQuery.sizeOf(context).height * 0.3,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(20)),
+                                      image: DecorationImage(
+                                          image: FileImage(
+                                            File(mediaFile!.path!),
+                                          ),
+                                          fit: BoxFit.cover),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                          sigmaX: 5,
+                                          sigmaY: 5,
+                                        ), // Adjust sigmaX and sigmaY for the desired blur intensity
+                                        child: GlassmorphicContainer(
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          borderRadius: 20,
+                                          blur: 20,
+                                          alignment: Alignment.bottomCenter,
+                                          border: 2,
+                                          linearGradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                const Color(0xFFffffff)
+                                                    .withOpacity(0.1),
+                                                const Color(0xFFFFFFFF)
+                                                    .withOpacity(0.05),
+                                              ],
+                                              stops: const [
+                                                0.1,
+                                                1,
+                                              ]),
+                                          borderGradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              const Color(0xFFffffff)
+                                                  .withOpacity(0.5),
+                                              const Color((0xFFFFFFFF))
+                                                  .withOpacity(0.5),
+                                            ],
+                                          ),
+                                          child: Image.file(
+                                            File(
+                                              mediaFile!.path!,
+                                            ),
+                                            // width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                          color: Colors.white70,
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            await selectFile();
+                                          },
+                                          icon: const Icon(
+                                            Icons.edit,
+                                            color: Color(0xffEE3A57),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Stack(
+                                children: [
+                                  Container(
+                                    height:
+                                        MediaQuery.sizeOf(context).height * 0.3,
+                                    width: double.infinity,
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/icons/demoPicture.png'),
+                                          fit: BoxFit.cover),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                          sigmaX: 5,
+                                          sigmaY: 5,
+                                        ), // Adjust sigmaX and sigmaY for the desired blur intensity
+                                        child: GlassmorphicContainer(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            borderRadius: 20,
+                                            blur: 20,
+                                            alignment: Alignment.bottomCenter,
+                                            border: 2,
+                                            linearGradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  const Color(0xFFffffff)
+                                                      .withOpacity(0.1),
+                                                  const Color(0xFFFFFFFF)
+                                                      .withOpacity(0.05),
+                                                ],
+                                                stops: const [
+                                                  0.1,
+                                                  1,
+                                                ]),
+                                            borderGradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                const Color(0xFFffffff)
+                                                    .withOpacity(0.5),
+                                                const Color((0xFFFFFFFF))
+                                                    .withOpacity(0.5),
+                                              ],
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Image.asset(
+                                                'assets/icons/demoPicture.png',
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )),
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                          color: Colors.white70,
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            await selectFile();
+                                          },
+                                          icon: const Icon(
+                                            Icons.edit,
+                                            color: Color(0xffEE3A57),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        // ^ ================= DP =================
+
                         // ^ ================= Name =================
+                        const Gap(28.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -419,9 +556,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
                                   bio: _bio.text.trim(),
                                 );
 
-                                //  createUser(user);
-
-                                await createUser(user);
+                                await uploadFileAndCreateUser(user, mediaFile!);
                                 setState(() {
                                   isLoading = false;
                                 });

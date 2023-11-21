@@ -1,13 +1,18 @@
 // color: Color(0xffFBFBFD),
 // Color(0xffEE3A57),
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
+import 'package:portfolio_app/pages/auth/backend/google_login.dart';
+import 'package:portfolio_app/pages/auth/frontend/login.dart';
 import 'package:portfolio_app/pages/upload/frontend/upload_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lottie/lottie.dart';
+import 'package:glassmorphism/glassmorphism.dart';
 
 import '../../../global/functions/navigate_page.dart';
 import '../model/user_model.dart';
@@ -31,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   int? phone;
   String? twitter;
   int? whatsapp;
+  String firebaseUrl = '';
 
   bool newUser = true;
 
@@ -63,6 +69,9 @@ class _HomePageState extends State<HomePage> {
           phone = userList.first.phone;
           twitter = userList.first.twitter;
           whatsapp = userList.first.whatsApp;
+          firebaseUrl = userList.first.dpUrl;
+          print('*****$firebaseUrl');
+          print('*****${userList.first.id}');
         });
       }
     } else {
@@ -78,6 +87,8 @@ class _HomePageState extends State<HomePage> {
         // bio = userList.first.bio;
         email = googleUser.email;
         phone = googleUser.phoneNumber as int?;
+        // firebaseUrl =
+        //     'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
       });
     }
   }
@@ -102,8 +113,62 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   height: MediaQuery.sizeOf(context).height * 0.3,
                   width: double.infinity,
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    image: firebaseUrl == ''
+                        ? const DecorationImage(
+                            image: NetworkImage(
+                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
+                            fit: BoxFit.cover)
+                        : DecorationImage(
+                            image: NetworkImage(firebaseUrl),
+                            fit: BoxFit.cover),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                        sigmaX: 5,
+                        sigmaY:
+                            5), // Adjust sigmaX and sigmaY for the desired blur intensity
+                    child: GlassmorphicContainer(
+                      width: double.infinity,
+                      height: double.infinity,
+                      borderRadius: 20,
+                      blur: 20,
+                      alignment: Alignment.bottomCenter,
+                      border: 2,
+                      linearGradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            const Color(0xFFffffff).withOpacity(0.1),
+                            const Color(0xFFFFFFFF).withOpacity(0.05),
+                          ],
+                          stops: const [
+                            0.1,
+                            1,
+                          ]),
+                      borderGradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFFffffff).withOpacity(0.5),
+                          const Color((0xFFFFFFFF)).withOpacity(0.5),
+                        ],
+                      ),
+                      child: firebaseUrl == ''
+                          ? const Center(
+                              child: CustomText01(
+                                text: 'Image Loading...',
+                                color: Colors.white,
+                              ),
+                            )
+                          : Image.network(
+                              firebaseUrl,
+                            ),
+                    ),
+                  ),
                 ),
+
                 const Gap(16.0),
                 // * full name
                 Row(
@@ -325,17 +390,24 @@ class _HomePageState extends State<HomePage> {
             width: MediaQuery.sizeOf(context).width * 0.9,
             height: 50.0,
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  backgroundColor: const Color(0xffEE3A57),
                 ),
-                backgroundColor: const Color(0xffEE3A57),
-              ),
-              onPressed: () {},
-              child: const Text(
-                'Log Out',
-              ),
-            ),
+                onPressed: () async {
+                  navigateFunc() {
+                    navigateToPage(context, const SocialLoginUi());
+                  }
+
+                  await signOut(context);
+                  navigateFunc();
+                },
+                child: const CustomText01(
+                  text: 'Log Out',
+                  color: Colors.white,
+                )),
           ),
         ),
         floatingActionButtonLocation:

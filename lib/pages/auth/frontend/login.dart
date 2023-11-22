@@ -4,6 +4,7 @@ import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:portfolio_app/pages/upload/frontend/home.dart';
+import 'package:portfolio_app/pages/upload/frontend/test_home.dart';
 
 import '../backend/google_login.dart';
 
@@ -73,7 +74,8 @@ class _SocialLoginUiState extends State<SocialLoginUi> {
                         onPressed: () async {
                           // function to avoid build context error
                           navigateFunc(String userEmail) {
-                            navigateToPage(context, HomePage(email: userEmail));
+                            navigateToPage(
+                                context, HomePageTest(email: userEmail));
                           }
 
                           final x = await googleSignIn();

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_app/global/theme/theme.dart';
 import 'package:portfolio_app/pages/upload/frontend/home.dart';
+import 'package:portfolio_app/pages/upload/frontend/test_home.dart';
 
 import 'pages/auth/frontend/auth.dart';
 import 'pages/auth/frontend/login.dart';
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
             // Return the appropriate screen based on the authentication status
             return isLoggedIn
                 // ? UserUploadUi(email: user)
-                ? HomePage(email: authService.currentUser!.email ?? 'johndoe')
+                ? HomePageTest(
+                    email: authService.currentUser!.email ?? 'johndoe')
                 : const SocialLoginUi();
           }
         },

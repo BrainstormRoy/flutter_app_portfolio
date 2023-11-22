@@ -34,6 +34,7 @@ class UserUploadUi extends StatefulWidget {
     required this.whatsapp,
     required this.twitter,
     required this.bio,
+    required this.dpUrl,
   });
 
   final String? firstName,
@@ -44,6 +45,7 @@ class UserUploadUi extends StatefulWidget {
       whatsapp,
       twitter,
       bio;
+  final String dpUrl;
 
   @override
   State<UserUploadUi> createState() => _UserUploadUiState();
@@ -53,6 +55,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
   bool showUsernameAvailability = false;
   bool usernameAvailable = true;
   bool isLoading = false;
+  bool newUser = false;
 
   PlatformFile? mediaFile;
   UploadTask? uploadTask;
@@ -89,6 +92,11 @@ class _UserUploadUiState extends State<UserUploadUi> {
 
   @override
   void initState() {
+    if (widget.username == '') {
+      setState(() {
+        newUser = true;
+      });
+    }
     setState(() {
       _firstName.text = widget.firstName!;
       _lastName.text = widget.lastName!;
@@ -156,181 +164,371 @@ class _UserUploadUiState extends State<UserUploadUi> {
                         const Gap(28.0),
 
                         // ^ ================= DP =================
-                        mediaFile != null
-                            ? Stack(
-                                children: [
-                                  Container(
-                                    height:
-                                        MediaQuery.sizeOf(context).height * 0.3,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(20)),
-                                      image: DecorationImage(
-                                          image: FileImage(
-                                            File(mediaFile!.path!),
-                                          ),
-                                          fit: BoxFit.cover),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                          sigmaX: 5,
-                                          sigmaY: 5,
-                                        ), // Adjust sigmaX and sigmaY for the desired blur intensity
-                                        child: GlassmorphicContainer(
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                          borderRadius: 20,
-                                          blur: 20,
-                                          alignment: Alignment.bottomCenter,
-                                          border: 2,
-                                          linearGradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                const Color(0xFFffffff)
-                                                    .withOpacity(0.1),
-                                                const Color(0xFFFFFFFF)
-                                                    .withOpacity(0.05),
-                                              ],
-                                              stops: const [
-                                                0.1,
-                                                1,
-                                              ]),
-                                          borderGradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              const Color(0xFFffffff)
-                                                  .withOpacity(0.5),
-                                              const Color((0xFFFFFFFF))
-                                                  .withOpacity(0.5),
-                                            ],
-                                          ),
-                                          child: Image.file(
-                                            File(
-                                              mediaFile!.path!,
-                                            ),
-                                            // width: double.infinity,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Container(
+
+                        // TODO: optimised code here ! ================= test ==================
+                        newUser
+                            ? mediaFile != null
+                                ? Stack(
+                                    children: [
+                                      Container(
+                                        height:
+                                            MediaQuery.sizeOf(context).height *
+                                                0.3,
+                                        width: double.infinity,
                                         decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(20)),
+                                          image: DecorationImage(
+                                              image: FileImage(
+                                                File(mediaFile!.path!),
+                                              ),
+                                              fit: BoxFit.cover),
+                                        ),
+                                        child: ClipRRect(
                                           borderRadius:
-                                              BorderRadius.circular(15.0),
-                                          color: Colors.white70,
-                                        ),
-                                        child: IconButton(
-                                          onPressed: () async {
-                                            await selectFile();
-                                          },
-                                          icon: const Icon(
-                                            Icons.edit,
-                                            color: Color(0xffEE3A57),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Stack(
-                                children: [
-                                  Container(
-                                    height:
-                                        MediaQuery.sizeOf(context).height * 0.3,
-                                    width: double.infinity,
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20),
-                                      ),
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/icons/demoPicture.png'),
-                                          fit: BoxFit.cover),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                          sigmaX: 5,
-                                          sigmaY: 5,
-                                        ), // Adjust sigmaX and sigmaY for the desired blur intensity
-                                        child: GlassmorphicContainer(
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            borderRadius: 20,
-                                            blur: 20,
-                                            alignment: Alignment.bottomCenter,
-                                            border: 2,
-                                            linearGradient: LinearGradient(
+                                              BorderRadius.circular(20),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                              sigmaX: 5,
+                                              sigmaY: 5,
+                                            ), // Adjust sigmaX and sigmaY for the desired blur intensity
+                                            child: GlassmorphicContainer(
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              borderRadius: 20,
+                                              blur: 20,
+                                              alignment: Alignment.bottomCenter,
+                                              border: 2,
+                                              linearGradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    const Color(0xFFffffff)
+                                                        .withOpacity(0.1),
+                                                    const Color(0xFFFFFFFF)
+                                                        .withOpacity(0.05),
+                                                  ],
+                                                  stops: const [
+                                                    0.1,
+                                                    1,
+                                                  ]),
+                                              borderGradient: LinearGradient(
                                                 begin: Alignment.topLeft,
                                                 end: Alignment.bottomRight,
                                                 colors: [
                                                   const Color(0xFFffffff)
-                                                      .withOpacity(0.1),
-                                                  const Color(0xFFFFFFFF)
-                                                      .withOpacity(0.05),
+                                                      .withOpacity(0.5),
+                                                  const Color((0xFFFFFFFF))
+                                                      .withOpacity(0.5),
                                                 ],
-                                                stops: const [
-                                                  0.1,
-                                                  1,
-                                                ]),
-                                            borderGradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                const Color(0xFFffffff)
-                                                    .withOpacity(0.5),
-                                                const Color((0xFFFFFFFF))
-                                                    .withOpacity(0.5),
-                                              ],
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
-                                              child: Image.asset(
-                                                'assets/icons/demoPicture.png',
+                                              ),
+                                              child: Image.file(
+                                                File(
+                                                  mediaFile!.path!,
+                                                ),
+                                                // width: double.infinity,
                                                 fit: BoxFit.cover,
                                               ),
-                                            )),
-                                      ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                          color: Colors.white70,
-                                        ),
-                                        child: IconButton(
-                                          onPressed: () async {
-                                            await selectFile();
-                                          },
-                                          icon: const Icon(
-                                            Icons.edit,
-                                            color: Color(0xffEE3A57),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                              color: Colors.white70,
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () async {
+                                                await selectFile();
+                                              },
+                                              icon: const Icon(
+                                                Icons.edit,
+                                                color: Color(0xffEE3A57),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Stack(
+                                    children: [
+                                      Container(
+                                        height:
+                                            MediaQuery.sizeOf(context).height *
+                                                0.3,
+                                        width: double.infinity,
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(20),
+                                          ),
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/icons/demoPicture.png'),
+                                              fit: BoxFit.cover),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                              sigmaX: 5,
+                                              sigmaY: 5,
+                                            ), // Adjust sigmaX and sigmaY for the desired blur intensity
+                                            child: GlassmorphicContainer(
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              borderRadius: 20,
+                                              blur: 20,
+                                              alignment: Alignment.bottomCenter,
+                                              border: 2,
+                                              linearGradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    const Color(0xFFffffff)
+                                                        .withOpacity(0.1),
+                                                    const Color(0xFFFFFFFF)
+                                                        .withOpacity(0.05),
+                                                  ],
+                                                  stops: const [
+                                                    0.1,
+                                                    1,
+                                                  ]),
+                                              borderGradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  const Color(0xFFffffff)
+                                                      .withOpacity(0.5),
+                                                  const Color((0xFFFFFFFF))
+                                                      .withOpacity(0.5),
+                                                ],
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Image.asset(
+                                                  'assets/icons/demoPicture.png',
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                              color: Colors.white70,
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () async {
+                                                await selectFile();
+                                              },
+                                              icon: const Icon(
+                                                Icons.edit,
+                                                color: Color(0xffEE3A57),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                            :
+                            // ! **********************************
+                            mediaFile != null
+                                ? Stack(
+                                    children: [
+                                      Container(
+                                        height:
+                                            MediaQuery.sizeOf(context).height *
+                                                0.3,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(20)),
+                                          image: DecorationImage(
+                                              image: FileImage(
+                                                File(mediaFile!.path!),
+                                              ),
+                                              fit: BoxFit.cover),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                              sigmaX: 5,
+                                              sigmaY: 5,
+                                            ), // Adjust sigmaX and sigmaY for the desired blur intensity
+                                            child: GlassmorphicContainer(
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              borderRadius: 20,
+                                              blur: 20,
+                                              alignment: Alignment.bottomCenter,
+                                              border: 2,
+                                              linearGradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    const Color(0xFFffffff)
+                                                        .withOpacity(0.1),
+                                                    const Color(0xFFFFFFFF)
+                                                        .withOpacity(0.05),
+                                                  ],
+                                                  stops: const [
+                                                    0.1,
+                                                    1,
+                                                  ]),
+                                              borderGradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  const Color(0xFFffffff)
+                                                      .withOpacity(0.5),
+                                                  const Color((0xFFFFFFFF))
+                                                      .withOpacity(0.5),
+                                                ],
+                                              ),
+                                              child: Image.file(
+                                                File(
+                                                  mediaFile!.path!,
+                                                ),
+                                                // width: double.infinity,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                              color: Colors.white70,
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () async {
+                                                await selectFile();
+                                              },
+                                              icon: const Icon(
+                                                Icons.edit,
+                                                color: Color(0xffEE3A57),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Stack(
+                                    children: [
+                                      Container(
+                                        height:
+                                            MediaQuery.sizeOf(context).height *
+                                                0.3,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(20),
+                                          ),
+                                          image: DecorationImage(
+                                              image: NetworkImage(widget.dpUrl),
+                                              fit: BoxFit.cover),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                              sigmaX: 5,
+                                              sigmaY: 5,
+                                            ),
+                                            child: GlassmorphicContainer(
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              borderRadius: 20,
+                                              blur: 20,
+                                              alignment: Alignment.bottomCenter,
+                                              border: 2,
+                                              linearGradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    const Color(0xFFffffff)
+                                                        .withOpacity(0.1),
+                                                    const Color(0xFFFFFFFF)
+                                                        .withOpacity(0.05),
+                                                  ],
+                                                  stops: const [
+                                                    0.1,
+                                                    1,
+                                                  ]),
+                                              borderGradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  const Color(0xFFffffff)
+                                                      .withOpacity(0.5),
+                                                  const Color((0xFFFFFFFF))
+                                                      .withOpacity(0.5),
+                                                ],
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Image.network(
+                                                  widget.dpUrl,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                              color: Colors.white70,
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () async {
+                                                await selectFile();
+                                              },
+                                              icon: const Icon(
+                                                Icons.edit,
+                                                color: Color(0xffEE3A57),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+
                         // ^ ================= DP =================
 
                         // ^ ================= Name =================
@@ -517,75 +715,154 @@ class _UserUploadUiState extends State<UserUploadUi> {
 
                         const Gap(28.0),
                         // ^ ================= Upload button =================
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50.0,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
+                        newUser
+                            ? SizedBox(
+                                width: double.infinity,
+                                height: 50.0,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                    backgroundColor: const Color(0xffEE3A57),
+                                  ),
+                                  onPressed: () async {
+                                    navigateFunc() {
+                                      navigateToPage(context,
+                                          HomePage(email: _email.text));
+                                    }
+
+                                    if (_firstName.text.trim().isNotEmpty &&
+                                        _lastName.text.trim().isNotEmpty &&
+                                        _username.text.trim().isNotEmpty &&
+                                        _email.text.trim().isNotEmpty &&
+                                        _phone.text.trim().isNotEmpty &&
+                                        _whatsapp.text.trim().isNotEmpty &&
+                                        _twitter.text.trim().isNotEmpty &&
+                                        _bio.text.trim().isNotEmpty &&
+                                        mediaFile!.path!.isEmpty) {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      final user = Users(
+                                        firstName: _firstName.text.trim(),
+                                        lastName: _lastName.text.trim(),
+                                        userName: _username.text.trim(),
+                                        email: _email.text.trim(),
+                                        phone:
+                                            int.tryParse(_phone.text.trim()) ??
+                                                0,
+                                        whatsApp: int.tryParse(
+                                                _whatsapp.text.trim()) ??
+                                            0,
+                                        twitter: _twitter.text.trim(),
+                                        bio: _bio.text.trim(),
+                                      );
+
+                                      await uploadFileAndCreateUser(
+                                          user, mediaFile!);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+
+                                      // Clear the text field controllers
+                                      _firstName.clear();
+                                      _lastName.clear();
+                                      _username.clear();
+                                      _email.clear();
+                                      _phone.clear();
+                                      _whatsapp.clear();
+                                      _twitter.clear();
+                                      _bio.clear();
+                                      navigateFunc();
+                                    } else {
+                                      customSnackBar(
+                                          context,
+                                          'Fields Empty',
+                                          const Color(0xffEE3A57),
+                                          const Color(0xffFBFBFD));
+                                    }
+                                  },
+                                  child: const CustomText01(
+                                    text: 'Save Data',
+                                    color: Color(0xffFBFBFD),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
+                            : SizedBox(
+                                width: double.infinity,
+                                height: 50.0,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                    backgroundColor: const Color(0xffEE3A57),
+                                  ),
+                                  onPressed: () async {
+                                    navigateFunc() {
+                                      navigateToPage(context,
+                                          HomePage(email: _email.text));
+                                    }
+
+                                    if (_firstName.text.trim().isNotEmpty &&
+                                        _lastName.text.trim().isNotEmpty &&
+                                        _username.text.trim().isNotEmpty &&
+                                        _email.text.trim().isNotEmpty &&
+                                        _phone.text.trim().isNotEmpty &&
+                                        _whatsapp.text.trim().isNotEmpty &&
+                                        _twitter.text.trim().isNotEmpty &&
+                                        _bio.text.trim().isNotEmpty) {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      final user = Users(
+                                        firstName: _firstName.text.trim(),
+                                        lastName: _lastName.text.trim(),
+                                        userName: _username.text.trim(),
+                                        email: _email.text.trim(),
+                                        phone:
+                                            int.tryParse(_phone.text.trim()) ??
+                                                0,
+                                        whatsApp: int.tryParse(
+                                                _whatsapp.text.trim()) ??
+                                            0,
+                                        twitter: _twitter.text.trim(),
+                                        bio: _bio.text.trim(),
+                                      );
+
+                                      await updateFileAndUserData(
+                                          user, mediaFile);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+
+                                      // Clear the text field controllers
+                                      _firstName.clear();
+                                      _lastName.clear();
+                                      _username.clear();
+                                      _email.clear();
+                                      _phone.clear();
+                                      _whatsapp.clear();
+                                      _twitter.clear();
+                                      _bio.clear();
+                                      navigateFunc();
+                                    } else {
+                                      customSnackBar(
+                                          context,
+                                          'Fields Empty',
+                                          const Color(0xffEE3A57),
+                                          const Color(0xffFBFBFD));
+                                    }
+                                  },
+                                  child: const CustomText01(
+                                    text: 'Update Data',
+                                    color: Color(0xffFBFBFD),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
-                              backgroundColor: const Color(0xffEE3A57),
-                            ),
-                            onPressed: () async {
-                              navigateFunc() {
-                                navigateToPage(
-                                    context, HomePage(email: _email.text));
-                              }
-
-                              if (_firstName.text.trim().isNotEmpty &&
-                                  _lastName.text.trim().isNotEmpty &&
-                                  _username.text.trim().isNotEmpty &&
-                                  _email.text.trim().isNotEmpty &&
-                                  _phone.text.trim().isNotEmpty &&
-                                  _whatsapp.text.trim().isNotEmpty &&
-                                  _twitter.text.trim().isNotEmpty &&
-                                  _bio.text.trim().isNotEmpty) {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                final user = Users(
-                                  firstName: _firstName.text.trim(),
-                                  lastName: _lastName.text.trim(),
-                                  userName: _username.text.trim(),
-                                  email: _email.text.trim(),
-                                  phone: int.tryParse(_phone.text.trim()) ?? 0,
-                                  whatsApp:
-                                      int.tryParse(_whatsapp.text.trim()) ?? 0,
-                                  twitter: _twitter.text.trim(),
-                                  bio: _bio.text.trim(),
-                                );
-
-                                await uploadFileAndCreateUser(user, mediaFile!);
-                                setState(() {
-                                  isLoading = false;
-                                });
-
-                                // Clear the text field controllers
-                                _firstName.clear();
-                                _lastName.clear();
-                                _username.clear();
-                                _email.clear();
-                                _phone.clear();
-                                _whatsapp.clear();
-                                _twitter.clear();
-                                _bio.clear();
-                                navigateFunc();
-                              } else {
-                                customSnackBar(
-                                    context,
-                                    'Fields Empty',
-                                    const Color(0xffEE3A57),
-                                    const Color(0xffFBFBFD));
-                              }
-                            },
-                            child: const CustomText01(
-                              text: 'Upload Data',
-                              color: Color(0xffFBFBFD),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
                         // ^ ================= Upload button =================
                         const Gap(28.0),
                       ],

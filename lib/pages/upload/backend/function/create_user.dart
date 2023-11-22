@@ -22,8 +22,10 @@ Future<void> uploadFileAndCreateUser(Users user, PlatformFile mediaFile) async {
     // Create a reference with the custom path
     final ref = FirebaseStorage.instance.ref().child(path);
 
+    final metadata =
+        SettableMetadata(contentType: 'images/${mediaFile.extension}');
     // Upload the file
-    final uploadTask = ref.putFile(file);
+    final uploadTask = ref.putFile(file, metadata);
 
     // Wait for the upload to complete
     final snapshot = await uploadTask.whenComplete(() {});

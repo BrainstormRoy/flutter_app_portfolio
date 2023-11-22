@@ -740,7 +740,7 @@ class _UserUploadUiState extends State<UserUploadUi> {
                                         _whatsapp.text.trim().isNotEmpty &&
                                         _twitter.text.trim().isNotEmpty &&
                                         _bio.text.trim().isNotEmpty &&
-                                        mediaFile!.path!.isEmpty) {
+                                        mediaFile!.path != '') {
                                       setState(() {
                                         isLoading = true;
                                       });

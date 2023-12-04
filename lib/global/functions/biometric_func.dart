@@ -27,6 +27,9 @@ Future<bool> authenticateWithBiometrics(context) async {
   }
 
   final bool result = authenticated ? true : false;
+  if (result == true) {
+    Navigator.pop(context);
+  }
 
   return result;
 }

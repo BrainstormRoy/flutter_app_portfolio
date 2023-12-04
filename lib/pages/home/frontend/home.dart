@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/pages/auth/frontend/login.dart';
@@ -12,7 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lottie/lottie.dart';
 import 'package:gap/gap.dart';
-
+import '../../../global/functions/biometric_func.dart';
 import '../../auth/backend/google_login.dart';
 import '../../upload/model/user_model.dart';
 
@@ -27,16 +28,51 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   User? currentUser = FirebaseAuth.instance.currentUser;
   late Future<Users?> userDataFuture;
+  final LocalAuthentication auth = LocalAuthentication();
 
   @override
   void initState() {
-    super.initState();
+    auth
+        .isDeviceSupported()
+        .then((bool isSupported) => authenticateWithBiometrics(context));
+
+    _showDialog();
     userDataFuture = retrieveUserData(widget.email);
+    super.initState();
+  }
+
+  _showDialog() async {
+    await Future.delayed(const Duration(milliseconds: 50));
+    // ignore: use_build_context_synchronously
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: AlertDialog(
+            title: const CustomText01(text: 'App is locked'),
+            content: const CustomText01(
+                text: 'Authentication is required to access the app'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  auth.isDeviceSupported().then((bool isSupported) async {
+                    await authenticateWithBiometrics(context);
+                  });
+                },
+                child: const CustomText01(text: 'Unlock'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<Users?> retrieveUserData(String userEmail) async {

@@ -6,7 +6,7 @@ import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:portfolio_app/pages/home/frontend/home.dart';
 
-import '../../../global/functions/biometric_func.dart';
+// import '../../../global/functions/biometric_func.dart';
 import '../backend/google_login.dart';
 
 class SocialLoginUi extends StatefulWidget {
@@ -30,14 +30,6 @@ class _SocialLoginUiState extends State<SocialLoginUi> {
   }
 
   final LocalAuthentication auth = LocalAuthentication();
-
-  @override
-  void initState() {
-    super.initState();
-    auth
-        .isDeviceSupported()
-        .then((bool isSupported) => authenticateWithBiometrics(context));
-  }
 
   @override
   Widget build(BuildContext context) {

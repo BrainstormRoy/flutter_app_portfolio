@@ -49,10 +49,6 @@ class _UserDrawerState extends State<UserDrawer> {
                 const SizedBox(height: 20.0),
                 ListTile(
                   enabled: _switchValue,
-                  onTap: () {
-                    _switchValue = !_switchValue;
-                    setValue(_switchValue);
-                  },
                   leading: const Icon(
                     Icons.lock_outlined,
                     size: 20.0,

@@ -8,26 +8,25 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 
-import 'package:portfolio_app/pages/upload/frontend/test_home.dart';
 import 'package:portfolio_app/pages/upload/frontend/upload_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lottie/lottie.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 
 import '../../../global/functions/navigate_page.dart';
-import '../model/user_model.dart';
+import '../../upload/model/user_model.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({
+class HomePageDontUse extends StatefulWidget {
+  const HomePageDontUse({
     super.key,
     required this.email,
   });
   final String email;
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePageDontUse> createState() => _HomePageDontUseState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageDontUseState extends State<HomePageDontUse> {
   String? firstName = '';
   String? lastName;
   String? userName;
@@ -121,8 +120,12 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(
-                        height: 50.0,
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.logout,
+                          color: Colors.amber,
+                        ),
                       ),
                       IconButton(
                         onPressed: () {},
@@ -423,19 +426,21 @@ class _HomePageState extends State<HomePage> {
                           letterSpacing: 1,
                         ),
                   const Gap(50.0),
-                  ElevatedButton(
-                      onPressed: () {
-                        navigateToPage(
-                            context,
-                            HomePageTest(
-                                email: 'gaurabroy.kyptronix@gmail.com'));
-                      },
-                      child: Text('asdf')),
+
+                  // ElevatedButton(
+                  //     onPressed: () {
+                  //       navigateToPage(
+                  //           context,
+                  //           HomePageTest(
+                  //               email: 'gaurabroy.kyptronix@gmail.com'));
+                  //     },
+                  //     child: Text('asdf')),
                 ],
               ),
             ),
           ),
         ),
+        drawer: const Drawer(),
       ),
     );
   }
@@ -452,33 +457,3 @@ List<String>? splitFullName(String? fullName) {
 
   return nameParts;
 }
-
-
-/*         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: SizedBox(
-            width: MediaQuery.sizeOf(context).width * 0.9,
-            height: 50.0,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  backgroundColor: const Color(0xffEE3A57),
-                ),
-                onPressed: () async {
-                  navigateFunc() {
-                    navigateToPage(context, const SocialLoginUi());
-                  }
-
-                  await signOut(context);
-                  navigateFunc();
-                },
-                child: const CustomText01(
-                  text: 'Log Out',
-                  color: Colors.white,
-                )),
-          ),
-        ),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.miniCenterDocked, */

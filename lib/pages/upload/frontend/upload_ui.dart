@@ -15,8 +15,8 @@ import 'package:portfolio_app/global/widgets/custom_snackbar.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:portfolio_app/pages/auth/frontend/login.dart';
-import 'package:portfolio_app/pages/upload/frontend/home.dart';
 
+import '../../home/frontend/home.dart';
 import '../model/user_model.dart';
 import '../backend/function/create_user.dart';
 import '../../auth/backend/google_login.dart';

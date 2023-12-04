@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:portfolio_app/pages/upload/frontend/home.dart';
-import 'package:portfolio_app/pages/upload/frontend/test_home.dart';
+import 'package:portfolio_app/pages/home/frontend/home.dart';
 
+import '../../../global/functions/biometric_func.dart';
 import '../backend/google_login.dart';
 
 class SocialLoginUi extends StatefulWidget {
@@ -28,6 +29,16 @@ class _SocialLoginUiState extends State<SocialLoginUi> {
     super.dispose();
   }
 
+  final LocalAuthentication auth = LocalAuthentication();
+
+  @override
+  void initState() {
+    super.initState();
+    auth
+        .isDeviceSupported()
+        .then((bool isSupported) => authenticateWithBiometrics(context));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -47,6 +58,7 @@ class _SocialLoginUiState extends State<SocialLoginUi> {
                   children: [
                     // ! ================= container =================
                     const Gap(44.0),
+
                     // ! ================= login text =================
                     // const Align(
                     //   alignment: Alignment.topLeft,
@@ -74,8 +86,7 @@ class _SocialLoginUiState extends State<SocialLoginUi> {
                         onPressed: () async {
                           // function to avoid build context error
                           navigateFunc(String userEmail) {
-                            navigateToPage(
-                                context, HomePageTest(email: userEmail));
+                            navigateToPage(context, HomePage(email: userEmail));
                           }
 
                           final x = await googleSignIn();

@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:portfolio_app/global/functions/navigate_page.dart';
+import 'package:portfolio_app/pages/auth/frontend/login.dart';
+import 'package:portfolio_app/pages/home/frontend/drawyer.dart';
 import 'package:portfolio_app/pages/upload/frontend/upload_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,19 +14,22 @@ import 'package:lottie/lottie.dart';
 import 'package:gap/gap.dart';
 
 import '../../auth/backend/google_login.dart';
-import '../model/user_model.dart';
+import '../../upload/model/user_model.dart';
 
-class HomePageTest extends StatefulWidget {
-  const HomePageTest({
+class HomePage extends StatefulWidget {
+  const HomePage({
     super.key,
     required this.email,
   });
   final String email;
   @override
-  State<HomePageTest> createState() => _HomePageTestState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageTestState extends State<HomePageTest> {
+class _HomePageState extends State<HomePage> {
+  //   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   User? currentUser = FirebaseAuth.instance.currentUser;
   late Future<Users?> userDataFuture;
 
@@ -53,6 +59,7 @@ class _HomePageTestState extends State<HomePageTest> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         body: Container(
           height: double.infinity,
           color: const Color(0xff1C1E33),
@@ -85,6 +92,7 @@ class _HomePageTestState extends State<HomePageTest> {
             ),
           ),
         ),
+        drawer: const UserDrawer(),
       ),
     );
   }
@@ -93,9 +101,28 @@ class _HomePageTestState extends State<HomePageTest> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const SizedBox(height: 50.0),
         IconButton(
-          onPressed: () => FirebaseAuth.instance.signOut(),
+          onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+          icon: const Icon(
+            Icons.menu,
+            color: Colors.amber,
+          ),
+        ),
+        IconButton(
+          onPressed: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.remove('biometric');
+
+            await FirebaseAuth.instance.signOut();
+            navigateFunc() {
+              navigateToPage(
+                context,
+                const SocialLoginUi(),
+              );
+            }
+
+            navigateFunc();
+          },
           icon: const Icon(Icons.logout, color: Colors.amber),
         ),
       ],
@@ -240,6 +267,7 @@ class _HomePageTestState extends State<HomePageTest> {
         // ! -------------------- display picture --------------------
 
         const Gap(16.0),
+
         // * full name
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -291,11 +319,14 @@ class _HomePageTestState extends State<HomePageTest> {
         ),
 
         // * username
-        CustomText01(
-          text: user.userName,
-          color: Colors.white,
-          fontSize: 16.0,
-          letterSpacing: 1,
+        Align(
+          alignment: Alignment.centerLeft,
+          child: CustomText01(
+            text: '@${user.userName}',
+            color: Colors.white,
+            fontSize: 16.0,
+            letterSpacing: 1,
+          ),
         ),
         const Gap(16.0),
 

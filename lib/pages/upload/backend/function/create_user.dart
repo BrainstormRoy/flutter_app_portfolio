@@ -62,7 +62,7 @@ Future<void> updateFileAndUserData(Users user, PlatformFile? mediaFile) async {
     // Generate a unique filename or use your own logic
     if (mediaFile!.path!.isNotEmpty) {
       final fileName =
-          'tap2x_${DateTime.now().millisecondsSinceEpoch}.${mediaFile!.path!.split('.').last}';
+          'tap2x_${DateTime.now().millisecondsSinceEpoch}.${mediaFile.path!.split('.').last}';
 
       // Combine the custom prefix and filename to create a custom path
       final path = 'displayPictures/$fileName';

@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_app/global/theme/theme.dart';
-import 'package:portfolio_app/pages/upload/frontend/test_home.dart';
+import 'package:portfolio_app/pages/home/frontend/home.dart';
 
 import 'pages/auth/frontend/auth.dart';
 import 'pages/auth/frontend/login.dart';
@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthService authService = AuthService();
-    // authService.isLoggedIn();
-    // final user = authService.currentUser!.email;
+    // // authService.isLoggedIn();
+    // // final user = authService.currentUser!.email;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -44,8 +44,7 @@ class MyApp extends StatelessWidget {
             // Return the appropriate screen based on the authentication status
             return isLoggedIn
                 // ? UserUploadUi(email: user)
-                ? HomePageTest(
-                    email: authService.currentUser!.email ?? 'johndoe')
+                ? HomePage(email: authService.currentUser!.email ?? 'johndoe')
                 : const SocialLoginUi();
           }
         },
@@ -53,5 +52,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-// SharedPreferences prefs =
-        // await SharedPreferences.getInstance(); 

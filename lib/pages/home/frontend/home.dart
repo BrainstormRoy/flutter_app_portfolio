@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:portfolio_app/global/widgets/custom_snackbar.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/pages/auth/frontend/login.dart';
@@ -33,13 +34,49 @@ class _HomePageState extends State<HomePage> {
   late Future<Users?> userDataFuture;
   final LocalAuthentication auth = LocalAuthentication();
 
+  // @override
+  // void initState() {
+  //   auth
+  //       .isDeviceSupported()
+  //       .then((bool isSupported) => authenticateWithBiometrics(context));
+
+  //   _showDialog();
+  //   userDataFuture = retrieveUserData(widget.email);
+  //   super.initState();
+  // }
+
   @override
   void initState() {
-    auth
-        .isDeviceSupported()
-        .then((bool isSupported) => authenticateWithBiometrics(context));
+    auth.isDeviceSupported().then((bool isSupported) {
+      if (isSupported) {
+        auth
+            .getAvailableBiometrics()
+            .then((List<BiometricType> availableBiometrics) {
+          if (availableBiometrics.isNotEmpty) {
+            // At least one biometric method is available
+            // isBiometricEnabled = true;
+            authenticateWithBiometrics(context);
+            _showDialog();
+          } else {
+            customSnackBar(
+                context,
+                'Please enable authentication for more security',
+                Colors.red.shade400,
+                Colors.white);
+            // No biometric methods are available
+            // Handle the case where biometrics is not enabled
+            // You might want to show an alternative authentication method
+            // or provide some other user interface feedback.
+          }
+        });
+      } else {
+        customSnackBar(context, 'No authentication method found',
+            Colors.red.shade400, Colors.white);
+        // Biometric authentication is not supported on this device
+        // Handle the case where biometrics is not supported
+      }
+    });
 
-    _showDialog();
     userDataFuture = retrieveUserData(widget.email);
     super.initState();
   }

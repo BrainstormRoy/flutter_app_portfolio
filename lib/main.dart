@@ -18,8 +18,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthService authService = AuthService();
-    // // authService.isLoggedIn();
-    // // final user = authService.currentUser!.email;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

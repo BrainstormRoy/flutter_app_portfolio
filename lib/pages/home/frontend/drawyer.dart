@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_app/global/functions/navigate_page.dart';
+import 'package:portfolio_app/pages/home/frontend/drawyer_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../global/widgets/custom_text.dart';
+import '../../auth/frontend/auth.dart';
+import 'home.dart';
 
 class UserDrawer extends StatefulWidget {
   const UserDrawer({super.key});
@@ -23,9 +27,11 @@ class _UserDrawerState extends State<UserDrawer> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool? value = prefs.getBool('biometric');
     setState(() {
-      _switchValue = value ?? false;
+      _switchValue = value ?? true;
     });
   }
+
+  final AuthService authService = AuthService();
 
   @override
   void initState() {
@@ -66,10 +72,21 @@ class _UserDrawerState extends State<UserDrawer> {
                       setState(() {
                         _switchValue = !_switchValue;
                         setValue(_switchValue);
+                        navigateToPage(
+                            context,
+                            HomePage(
+                                email: authService.currentUser!.email ??
+                                    'johndoe'));
                       });
                     },
                   ),
                 ),
+                const Divider(color: Colors.white),
+                //
+                DrawerList(
+                    onTap: () {},
+                    icon: Icons.code,
+                    title: 'Generate Referal Code'),
               ],
             ),
           ),

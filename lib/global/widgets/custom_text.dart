@@ -12,6 +12,7 @@ class CustomText01 extends StatefulWidget {
     this.maxLines,
     this.overflow,
     this.textDecoration,
+    this.textAlign,
   });
 
   final String text;
@@ -21,6 +22,7 @@ class CustomText01 extends StatefulWidget {
   final int? maxLines;
   final TextOverflow? overflow;
   final TextDecoration? textDecoration;
+  final TextAlign? textAlign;
   @override
   State<CustomText01> createState() => _CustomText01State();
 }
@@ -39,6 +41,7 @@ class _CustomText01State extends State<CustomText01> {
       ),
       maxLines: widget.maxLines,
       overflow: widget.overflow,
+      textAlign: widget.textAlign,
     );
   }
 }

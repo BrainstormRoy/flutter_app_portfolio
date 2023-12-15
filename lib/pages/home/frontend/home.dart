@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:portfolio_app/global/widgets/custom_snackbar.dart';
 import 'package:portfolio_app/global/widgets/custom_text.dart';
 import 'package:portfolio_app/global/functions/navigate_page.dart';
 import 'package:portfolio_app/pages/auth/frontend/login.dart';
@@ -31,55 +30,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   User? currentUser = FirebaseAuth.instance.currentUser;
+  bool noAuthWarning = false;
+  bool _switchValue = true;
   late Future<Users?> userDataFuture;
   final LocalAuthentication auth = LocalAuthentication();
-
-  // @override
-  // void initState() {
-  //   auth
-  //       .isDeviceSupported()
-  //       .then((bool isSupported) => authenticateWithBiometrics(context));
-
-  //   _showDialog();
-  //   userDataFuture = retrieveUserData(widget.email);
-  //   super.initState();
-  // }
-
-  @override
-  void initState() {
-    auth.isDeviceSupported().then((bool isSupported) {
-      if (isSupported) {
-        auth
-            .getAvailableBiometrics()
-            .then((List<BiometricType> availableBiometrics) {
-          if (availableBiometrics.isNotEmpty) {
-            // At least one biometric method is available
-            // isBiometricEnabled = true;
-            authenticateWithBiometrics(context);
-            _showDialog();
-          } else {
-            customSnackBar(
-                context,
-                'Please enable authentication for more security',
-                Colors.red.shade400,
-                Colors.white);
-            // No biometric methods are available
-            // Handle the case where biometrics is not enabled
-            // You might want to show an alternative authentication method
-            // or provide some other user interface feedback.
-          }
-        });
-      } else {
-        customSnackBar(context, 'No authentication method found',
-            Colors.red.shade400, Colors.white);
-        // Biometric authentication is not supported on this device
-        // Handle the case where biometrics is not supported
-      }
-    });
-
-    userDataFuture = retrieveUserData(widget.email);
-    super.initState();
-  }
 
   _showDialog() async {
     await Future.delayed(const Duration(milliseconds: 50));
@@ -126,6 +80,53 @@ class _HomePageState extends State<HomePage> {
       debugPrint('Error fetching user data: $e');
     }
     return null;
+  }
+
+  getAuthentication() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool? value = prefs.getBool('biometric');
+    setState(() {
+      _switchValue = value ?? true;
+    });
+    print(_switchValue);
+
+    (_switchValue)
+        ? auth.isDeviceSupported().then(
+            (bool isSupported) {
+              if (isSupported) {
+                auth.getAvailableBiometrics().then(
+                  (List<BiometricType> availableBiometrics) {
+                    if (availableBiometrics.isNotEmpty) {
+                      authenticateWithBiometrics(context);
+                      _showDialog();
+                    } else {
+                      setState(() {
+                        noAuthWarning = true;
+                      });
+                      // customSnackBar(
+                      //     context,
+                      //     'Please enable authentication for more security',
+                      //     Colors.red.shade400,
+                      //     Colors.white);
+                    }
+                  },
+                );
+              } else {
+                setState(() {
+                  noAuthWarning = true;
+                });
+              }
+            },
+          )
+        : null;
+  }
+
+  @override
+  void initState() {
+    getAuthentication();
+
+    userDataFuture = retrieveUserData(widget.email);
+    super.initState();
   }
 
   @override
@@ -365,6 +366,56 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+            const Gap(10),
+            noAuthWarning
+                ? GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        useSafeArea: true,
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog.adaptive(
+                            backgroundColor: const Color(0xff1C1E33),
+                            content: SingleChildScrollView(
+                              child: Container(
+                                decoration: const BoxDecoration(),
+                                child: const Column(
+                                  children: [
+                                    CustomText01(
+                                      text: 'Warning!',
+                                      fontSize: 14.0,
+                                      color: Colors.white,
+                                    ),
+                                    Divider(
+                                      color: Colors.white,
+                                    ),
+                                    Gap(10.0),
+                                    Icon(
+                                      Icons.warning_rounded,
+                                      size: 100.0,
+                                      color: Colors.amber,
+                                    ),
+                                    CustomText01(
+                                      text:
+                                          'Please enable authentication for enhanced security!',
+                                      fontSize: 14.0,
+                                      color: Colors.red,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: const Icon(
+                      Icons.warning,
+                      color: Colors.amber,
+                    ),
+                  )
+                : const SizedBox(),
             const Spacer(),
             IconButton(
               onPressed: () async {
